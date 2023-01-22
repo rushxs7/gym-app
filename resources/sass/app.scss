@@ -6,3 +6,32 @@
 
 // Bootstrap
 @import "bootstrap/scss/bootstrap";
+
+.html5tooltip-box {
+    padding: 0.3em 0.8em;
+}
+
+.radius-10 {
+    border-radius: 10px;
+}
+
+.bg-gradient-deepblue {
+    background: #6a11cb;
+    background: -webkit-linear-gradient(45deg, #6a11cb, #2575fc) !important;
+    background: linear-gradient(45deg, #6a11cb, #2575fc) !important;
+}
+.bg-gradient-orange {
+    background: #fc4a1a;
+    background: -webkit-linear-gradient(45deg, #fc4a1a, #f7b733) !important;
+    background: linear-gradient(45deg, #fc4a1a, #f7b733) !important;
+}
+.bg-gradient-ohhappiness {
+    background: #00b09b;
+    background: -webkit-linear-gradient(45deg, #00b09b, #96c93d) !important;
+    background: linear-gradient(45deg, #00b09b, #96c93d) !important;
+}
+.bg-gradient-ibiza {
+    background: #ee0979;
+    background: -webkit-linear-gradient(45deg, #ee0979, #ff6a00) !important;
+    background: linear-gradient(45deg, #ee0979, #ff6a00) !important;
+}

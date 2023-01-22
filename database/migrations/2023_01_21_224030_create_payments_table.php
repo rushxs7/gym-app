@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('member_id');
             $table->float('received_amount');
             $table->float('returned_amount')->default(0);
+            $table->float('balance');
             $table->string('type');
             $table->string('description')->nullable();
             $table->timestamps();

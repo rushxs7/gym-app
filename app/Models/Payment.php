@@ -13,6 +13,7 @@ class Payment extends Model
         'member_id',
         'received_amount',
         'returned_amount',
+        'balance',
         'type',
         'description'
     ];

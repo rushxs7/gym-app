@@ -20,7 +20,7 @@ class MemberSeeder extends Seeder
         $faker = Faker::create();
 
         for ($i=0; $i < 10; $i++) {
-            $eom = Carbon::today()->addMonths(rand(1,3));
+            $eom = Carbon::today()->addMonths(rand(-3,0));
             Member::create([
                 'rfid_code' => $faker->uuid(),
                 'name' => $faker->name(),

@@ -31,7 +31,16 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <div class="nav-item">
-                            <a class="nav-link" href="{{ route('members.index') }}">Members</a>
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}">Members</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('visits.*') ? 'active' : '' }}" href="{{ route('visits.index') }}">Visits</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('payments.*') ? 'active' : '' }}" href="{{ route('payments.index') }}">Payments</a>
                         </div>
                     </ul>
 

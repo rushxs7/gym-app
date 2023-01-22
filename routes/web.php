@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -23,5 +26,7 @@ Auth::routes(['register' => false]);
 Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/members', function () {})->name('members.index');
+    Route::get('/members', [MemberController::class, 'index'])->name('members.index');
+    Route::get('/visits', [VisitController::class, 'index'])->name('visits.index');
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
 });

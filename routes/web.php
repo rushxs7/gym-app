@@ -27,6 +27,7 @@ Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])-
 
 Route::middleware('auth')->group(function () {
     Route::get('/members', [MemberController::class, 'index'])->name('members.index');
+    Route::post('/members/store', [MemberController::class, 'store'])->name('members.store');
     Route::get('/visits', [VisitController::class, 'index'])->name('visits.index');
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
 });

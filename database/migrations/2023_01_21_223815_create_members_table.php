@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('email')->nullable();
             $table->string('phone');
-            $table->string('phone2')->nullable();
             $table->string('gender')->nullable();
             $table->boolean('active')->default(false);
             $table->date('end_of_membership');

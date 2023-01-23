@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\VisitController;
@@ -23,9 +24,10 @@ Route::get('/', function () {
 
 Auth::routes(['register' => false]);
 
-Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+
     Route::get('/members', [MemberController::class, 'index'])->name('members.index');
     Route::post('/members/store', [MemberController::class, 'store'])->name('members.store');
 

@@ -81,7 +81,6 @@
                             <th>Naam</th>
                             <th>Status</th>
                             <th>Telefoon</th>
-                            {{-- <th>Adres</th> --}}
                             <th>Geldig</th>
                             <th></th>
                           </tr>

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('member_id');
             $table->timestamp('time_of_arrival');
             $table->timestamp('time_of_departure')->nullable();
-            $table->timestamps();
         });
     }
 

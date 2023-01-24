@@ -59,10 +59,12 @@
                                     </select>
                                 </div>
                                 <div class="col-4">
-                                    <button class="btn btn-primary" type="submit"><i class="bi-funnel"></i> Filteren</button>
-                                    @if (request('searchquery') || request('status') || request('expiry'))
-                                        <a href="{{ route('members.index') }}" class="btn btn-danger"><i class="bi-arrow-counterclockwise"></i></a>
-                                    @endif
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-primary" type="submit"><i class="bi-funnel"></i></button>
+                                        @if (request('searchquery') || request('status') || request('expiry'))
+                                            <a href="{{ route('members.index') }}" class="btn btn-danger"><i class="bi-arrow-counterclockwise"></i></a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                             </form>
@@ -129,8 +131,8 @@
                                                 <i class="bi-link"></i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
-                                                <li><a class="dropdown-item" href="#">Visites</a></li>
-                                                <li><a class="dropdown-item" href="#">Betalingen</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('visits.index') }}/?memberId={{ $member->id }}">Visites</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('payments.index') }}?memberId={{ $member->id }}">Betalingen</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" href="#">Bewerken</a></li>
                                                 <li><a class="dropdown-item" href="#">Verwijderen</a></li>
@@ -141,7 +143,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td>No members</td>
+                                <td>Geen members</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

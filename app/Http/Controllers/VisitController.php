@@ -17,6 +17,9 @@ class VisitController extends Controller
                     $query->where('name', 'like', '%' . request('searchquery') . '%');
                 });
             })
+            ->when(request('memberId'), function ($query) {
+                $query->where('member_id', request('memberId'));
+            })
             ->when(request('timespan'), function ($query) {
                 switch (request('timespan')) {
                     case 'today':
@@ -26,13 +29,20 @@ class VisitController extends Controller
                         $query->whereDate('time_of_arrival', Carbon::yesterday()->toDateString());
                         break;
                     case 'thisweek':
-                        $query->whereBetween('time_of_arrival', [Carbon::today()->startOfWeek()->toDateString(), Carbon::today()->endOfWeek()->toDateString()]);
+                        $query->whereBetween('time_of_arrival', [Carbon::today()->startOfWeek()->startOfDay()->toDateTimeString(), Carbon::today()->endOfWeek()->endOfDay()->toDateTimeString()]);
                         break;
                     case 'thismonth':
                         $query->whereMonth('time_of_arrival', Carbon::today()->month);
                         break;
+                    case 'custom':
+                        $query->whereBetween('time_of_arrival', [
+                                Carbon::parse(request('startFilter'))->startOfDay()->toDateTimeString(),
+                                Carbon::parse(request('endFilter'))->endOfDay()->toDateTimeString()
+                            ]);
+                        break;
                 }
             })
+            ->orderBy('time_of_arrival', 'asc')
             ->with(['members'])
             ->paginate(15);
 

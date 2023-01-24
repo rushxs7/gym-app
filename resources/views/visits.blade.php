@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">{{ __('Members') }}</div>
+                <div class="card-header">{{ __('Visites') }}</div>
 
                 <div class="card-body">
                     @if (session('status'))
@@ -36,28 +36,48 @@
                     <div class="row">
                         <div class="col-10">
                             <form action="{{ route('visits.index') }}" method="GET">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="input-group mb-3">
+                            <div class="row mb-2">
+                                <div class="col-3">
+                                    <div class="input-group">
                                         <span class="input-group-text" id="zoeken"><i class="bi-search"></i></span>
                                         <input type="text" name="searchquery" {!! request('searchquery') ? 'value="' . request('searchquery') . '"' : '' !!} class="form-control" placeholder="Zoeken" aria-label="Zoeken" aria-describedby="search">
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <select name="timespan" class="form-select mb-3" aria-label="timespan">
-                                        <option disabled {{ request('timespan') ? '' : 'selected' }}>Datum</option>
+                                    <select id="timespan" name="timespan" class="form-select" aria-label="timespan">
+                                        <option disabled {{ request('timespan') ? '' : 'selected' }}>Tijdspanne</option>
                                         <option value="today" {{ request('timespan') == 'today' ? 'selected' : '' }}>Vandaag</option>
                                         <option value="yesterday" {{ request('timespan') == 'yesterday' ? 'selected' : '' }}>Gisteren</option>
                                         <option value="thisweek" {{ request('timespan') == 'thisweek' ? 'selected' : '' }}>Deze week</option>
                                         <option value="thismonth" {{ request('timespan') == 'thismonth' ? 'selected' : '' }}>Deze maand</option>
-                                        {{-- <option value="custom" {{ request('timespan') == 'custom' ? 'selected' : '' }}>Aangepast</option> --}}
+                                        <option value="custom" {{ request('timespan') == 'custom' ? 'selected' : '' }}>Aangepast</option>
                                     </select>
                                 </div>
-                                <div class="col-4">
-                                    <button class="btn btn-primary" type="submit"><i class="bi-funnel"></i> Filteren</button>
-                                    @if (request('searchquery') || request('timespan'))
+                                @php
+                                    $startFilter = \Carbon\Carbon::parse(request('startFilter'))->toDateString();
+                                    $endFilter = \Carbon\Carbon::parse(request('endFilter'))->toDateString();
+                                @endphp
+                                <div id="specificDateFilter" class="col-5" style="display: none;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-fill">
+                                            <input type="date" required class="form-control" id="startFilter" name="startFilter" {!! request('startFilter') ? 'value="' . $startFilter . '"' : '' !!}>
+                                        </div>
+                                        <div class="">
+                                            &nbsp;&nbsp;-&nbsp;&nbsp;
+                                        </div>
+                                        <div class="flex-fill">
+                                            <input type="date" required class="form-control" id="endFilter" name="endFilter" {!! request('endFilter') ? 'value="' . $endFilter . '"' : '' !!}>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="btn-group" role="group">
+
+                                    <button class="btn btn-primary" type="submit"><i class="bi-funnel"></i></button>
+                                    @if (request('searchquery') || request('timespan') || request('memberId'))
                                         <a href="{{ route('visits.index') }}" class="btn btn-danger"><i class="bi-arrow-counterclockwise"></i></a>
                                     @endif
+                                    </div>
                                 </div>
                             </div>
                             </form>
@@ -88,7 +108,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td>No visits</td>
+                                <td>Geen visites</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -136,6 +156,24 @@
 @section('javascript')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
 <script>
+    computedSpecificDateFilter()
 
+    $("#timespan").on("change", function() {
+        computedSpecificDateFilter()
+    })
+
+    function computedSpecificDateFilter() {
+        if($("#timespan").val() == "custom"){
+            $("#specificDateFilter").show()
+            $("#startFilter").prop("required", true)
+            $("#endFilter").prop("required", true)
+        } else {
+            $("#specificDateFilter").hide()
+            $("#startFilter").val("")
+            $("#endFilter").val("")
+            $("#startFilter").prop("required", false)
+            $("#endFilter").prop("required", false)
+        }
+    }
 </script>
 @endsection

@@ -19,7 +19,7 @@ class VisitSeeder extends Seeder
     {
         $membersArray = Member::get(['id'])->pluck('id');
         $membersArrayLength = count($membersArray);
-        // dd($members);
+
         for ($i=0; $i < 100; $i++) {
             $arrival = Carbon::now()->subDays(rand(0,20))->subHours(rand(0,4))->toDateTimeString();
             $departure = Carbon::parse($arrival)->addHours(rand(1,3));

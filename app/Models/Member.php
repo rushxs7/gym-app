@@ -10,7 +10,6 @@ class Member extends Model
     use HasFactory;
 
     protected $fillable = [
-        'rfid_code',
         'name',
         'address',
         'email',

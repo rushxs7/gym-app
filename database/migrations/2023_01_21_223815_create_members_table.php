@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->uuid('rfid_code');
             $table->string('name');
             $table->string('address')->nullable();
             $table->string('email')->nullable();

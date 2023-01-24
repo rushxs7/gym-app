@@ -22,7 +22,6 @@ class MemberSeeder extends Seeder
         for ($i=0; $i < 10; $i++) {
             $eom = Carbon::today()->addMonthsWithoutOverflow(rand(-3,0));
             Member::create([
-                'rfid_code' => $faker->uuid(),
                 'name' => $faker->firstName() . ' ' . $faker->lastName(),
                 'address' => rand(0,1) ? $faker->address() : '',
                 'email' => rand(0,1) ? $faker->email() : '',

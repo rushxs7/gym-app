@@ -253,12 +253,26 @@
         }
     })
 
-    function recordVisitation(memberId) {
+    async function recordVisitation(memberId) {
         console.log("Record visit of Member #" + memberId)
+        await axios({
+            method: 'post',
+            url: '/api/members/' + memberId + '/actions/visit'
+        })
+        .then(function (response) {
+            console.log(response)
+        })
     }
 
-    function prolongMember (memberId) {
+    async function prolongMember (memberId) {
         console.log("Prolong Member #" + memberId)
+        await axios({
+            method: 'post',
+            url: '/api/members/' + memberId + '/actions/prolong'
+        })
+        .then(function (response) {
+            console.log(response)
+        })
     }
 </script>
 @endsection

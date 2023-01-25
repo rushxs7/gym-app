@@ -13,11 +13,13 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     {{-- <link href="https://fonts.bunny.net/css?family=Ubuntu" rel="stylesheet"> --}}
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons/bootstrap-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sweetalert2.min.css') }}">
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <script src="{{ asset('js/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ asset('js/sweetalert2.min.js') }}"></script>
+    <script src="{{ asset('js/axios.min.js') }}"></script>
 </head>
 <body>
     <div id="app">

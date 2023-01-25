@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MemberController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth')->group(function() {
+    Route::get('/user', function (Request $request) { return $request->user(); });
+
+    Route::post('/members/{memberId}/actions/visit', [MemberController::class, 'visit']);
+    Route::post('/members/{memberId}/actions/prolong', [MemberController::class, 'prolong']);
 });

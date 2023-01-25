@@ -120,10 +120,10 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end" data-tooltip-stickto="top" data-tooltip-color="#ddd">
-                                        <button data-tooltip="Inklokken" class="btn btn-sm btn-light ms-1">
+                                        <button data-tooltip="Inklokken" onclick="recordVisitation({{ $member->id }})" class="btn btn-sm btn-light ms-1">
                                             <i class="bi-box-arrow-in-right"></i>
                                         </button>
-                                        <button data-tooltip="Prolongeren" class="btn btn-sm btn-light ms-1">
+                                        <button data-tooltip="Prolongeren" onclick="prolongMember({{ $member->id }})" class="btn btn-sm btn-light ms-1">
                                             <i class="bi-arrow-repeat"></i>
                                         </button>
                                         <div class="dropdown ms-1">
@@ -252,5 +252,13 @@
             $("#addRetour").prop("required", false)
         }
     })
+
+    function recordVisitation(memberId) {
+        console.log("Record visit of Member #" + memberId)
+    }
+
+    function prolongMember (memberId) {
+        console.log("Prolong Member #" + memberId)
+    }
 </script>
 @endsection

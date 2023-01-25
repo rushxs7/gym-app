@@ -18,7 +18,7 @@
                             <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex align-items-center text-white">
-                            <p class="mb-0">Active Members</p>
+                            <p class="mb-0">Actieve Members</p>
                             {{-- <p class="mb-0 ms-auto">+4.2%<span><i class="bx bx-up-arrow-alt"></i></span></p> --}}
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                             <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex align-items-center text-white">
-                            <p class="mb-0">New Members</p>
+                            <p class="mb-0">Nieuwe Members</p>
                             <p class="mb-0 ms-auto">
                                 {{ Str::ucfirst(\Carbon\Carbon::today()->locale('nl')->monthName) }}
                             </p>
@@ -58,7 +58,7 @@
                             <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex align-items-center text-white">
-                            <p class="mb-0">Visits Today</p>
+                            <p class="mb-0">Visites Vandaag</p>
                             <p class="mb-0 ms-auto">{{ $visitorDifference }}%<span><i class="bx bx-up-arrow-alt"></i></span></p>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                             <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="d-flex align-items-center text-white">
-                            <p class="mb-0">Total Revenue</p>
+                            <p class="mb-0">Totale Inkomsten</p>
                             <p class="mb-0 ms-auto">{{ Str::ucfirst(\Carbon\Carbon::today()->locale('nl')->monthName) }}</p>
                         </div>
                     </div>

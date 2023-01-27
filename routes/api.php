@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function() {
     Route::get('/user', function (Request $request) { return $request->user(); });
 
+    Route::get('/members/{memberId}', [MemberController::class, 'show']);
     Route::post('/members/{memberId}/actions/visit', [MemberController::class, 'visit']);
+    Route::get('/members/{memberId}/actions/promptprolongation', [MemberController::class, 'promptprolongation']);
     Route::post('/members/{memberId}/actions/prolong', [MemberController::class, 'prolong']);
 });

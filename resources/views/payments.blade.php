@@ -96,8 +96,6 @@
                             <th>Type</th>
                             <th>Beschrijving</th>
                             <th>Inkomst</th>
-                            <th>Retour</th>
-                            <th>Ontvangen</th>
                             <th>Member</th>
                             <th>Gedaan op</th>
                           </tr>
@@ -109,8 +107,6 @@
                                 <td>{{ $payment->type }}</td>
                                 <td>{{ $payment->description }}</td>
                                 <td>SRD {{ number_format($payment->balance, 2) }}</td>
-                                <td>SRD {{ number_format($payment->returned_amount, 2) }}</td>
-                                <td>SRD {{ number_format($payment->received_amount, 2) }}</td>
                                 <td>
                                     @if ($payment->members)
                                         {{ $payment->members->name }}
@@ -123,6 +119,7 @@
                             @empty
                             <tr>
                                 <td>Geen betalingen</td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

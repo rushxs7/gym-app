@@ -15,8 +15,6 @@ class Visit extends Model
         'time_of_departure',
     ];
 
-    public $timestamps = false;
-
     public function members()
     {
         return $this->belongsTo(Member::class, 'member_id', 'id');

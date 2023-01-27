@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MemberResource;
+use App\Http\Resources\MemberResourceCollection;
 use App\Models\Member;
 use App\Models\Payment;
 use App\Models\Visit;
@@ -23,16 +25,16 @@ class MemberController extends Controller
                     ->orWhere('address', 'like', '%' . request('searchquery') . '%')
                     ->orWhere('email', 'like', '%' . request('searchquery') . '%');
             })
-            ->when(request('status'), function ($query) {
-                switch (request('status')) {
-                    case 'active':
-                        $query->where('active', 1);
-                        break;
-                    case 'inactive':
-                        $query->where('active', 0);
-                        break;
-                }
-            })
+            // ->when(request('status'), function ($query) {
+            //     switch (request('status')) {
+            //         case 'active':
+            //             $query->where('active', 1);
+            //             break;
+            //         case 'inactive':
+            //             $query->where('active', 0);
+            //             break;
+            //     }
+            // })
             ->when(request('expiry'), function ($query) {
                 $today = Carbon::today()->toDateString();
                 $fiveDaysFromToday = Carbon::today()->addDays(5)->toDateString();
@@ -49,10 +51,23 @@ class MemberController extends Controller
                         break;
                 }
             })
+            ->with(['visits' => function ($query) {
+                $query->whereNotNull('time_of_arrival')
+                    ->whereNull('time_of_departure')
+                    ->get();
+            }])
             ->orderBy('name', 'asc')
             ->paginate(15);
 
+            // return new MemberResourceCollection($members);
+
         return view('members', ['members' => $members]);
+    }
+
+    public function show(Member $memberId)
+    {
+        $memberId->load(['visits', 'payments']);
+        return new MemberResource($memberId);
     }
 
     public function store(Request $request)
@@ -75,17 +90,12 @@ class MemberController extends Controller
         $member->address = $request->address;
         $member->gender = $request->gender;
         $member->end_of_membership = Carbon::parse($request->expiry);
-
-        $member->active = true;
-        $member->rfid_code = Str::uuid();
         $member->save();
 
         if (request('registration')) {
             Payment::create([
                 'member_id' => $member->id,
-                'received_amount' => (float) $request->paid,
-                'returned_amount' => (float) $request->retour,
-                'balance' => (float) ($request->paid - $request->retour),
+                'balance' => (float) $request->balance,
                 'type' => 'INS',
                 'description' => 'Inschrijving Lid #' . $member->id . ' (' . $member->name . ')',
             ]);
@@ -99,9 +109,9 @@ class MemberController extends Controller
         $endOfMembership = Carbon::parse($memberId->end_of_membership);
         $today = Carbon::today();
 
-        if (!$memberId->active) {
-            return $this->error(['member' => $memberId, 'message' => 'Inactieve member. Prolongeer lidmaatschap eerst.'], 'inactief', 406);
-        }
+        // if (!$memberId->active) {
+        //     return $this->error(['member' => $memberId, 'message' => 'Inactieve member. Prolongeer lidmaatschap eerst.'], 'inactief', 406);
+        // }
         if ($today->greaterThan($endOfMembership)) {
             return $this->error(['member' => $memberId, 'message' => 'Lidmaatschap vervallen op ' . $endOfMembership->copy()->locale('nl')->toFormattedDateString() . '.'], 'vervallen', 406);
         }
@@ -120,11 +130,11 @@ class MemberController extends Controller
 
         $diffInDays = $today->diffInDays($endOfMembership);
         if ($diffInDays == 0) {
-            $expiryMessage = 'Vervalt vandaag.';
+            $expiryMessage = 'Lidmaatschap vervalt vandaag.';
         } else if ($diffInDays == 1) {
-            $expiryMessage = 'Vervalt over 1 dag.';
+            $expiryMessage = 'Lidmaatschap vervalt over 1 dag.';
         } else {
-            $expiryMessage = 'Vervalt over ' . $diffInDays . ' dagen.';
+            $expiryMessage = 'Lidmaatschap vervalt over ' . $diffInDays . ' dagen.';
         }
 
         if (!count($unclosedVisitsToday)) {
@@ -148,11 +158,32 @@ class MemberController extends Controller
         }
     }
 
+    public function promptprolongation(Member $memberId, Request $request)
+    {
+        $diffInDays = Carbon::today()->diffInDays(Carbon::parse($memberId->end_of_membership), false);
+        if ($diffInDays < 0) {
+            $newExpiryDate = Carbon::today()
+                ->addMonthsWithoutOverflow(1)
+                ->locale('nl')
+                ->isoFormat('LL');
+        } else {
+            $newExpiryDate = Carbon::parse($memberId->end_of_membership)
+                ->addMonthsWithoutOverflow(1)
+                ->locale('nl')
+                ->isoFormat('LL');
+        }
+
+        return $this->success([
+            'member' => $memberId,
+            'proposed_date' => $newExpiryDate
+        ], 'proposeddate');
+    }
+
     public function prolong(Member $memberId, Request $request)
     {
-        if (!$memberId->active) {
-            $memberId->active = 1;
-        }
+        // if (!$memberId->active) {
+        //     $memberId->active = 1;
+        // }
         $diffInDays = Carbon::today()->diffInDays(Carbon::parse($memberId->end_of_membership), false);
         if ($diffInDays < 0) {
             $newExpiryDate = Carbon::today()->addMonthsWithoutOverflow(1);
@@ -166,7 +197,7 @@ class MemberController extends Controller
         return $this->success([
             'verschil' => $diffInDays,
             'member' => $memberId,
-            'message' => 'Lidmaatschap geprolongeerd tot en met ' . $newExpiryDate->copy()->locale('nl')->isoFormat('LLLL'),
+            'message' => 'Lidmaatschap geprolongeerd tot en met ' . $newExpiryDate->copy()->locale('nl')->isoFormat('LL'),
         ], 'geprolongeerd');
     }
 }

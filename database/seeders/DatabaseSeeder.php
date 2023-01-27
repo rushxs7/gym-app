@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             MemberSeeder::class,
-            VisitSeeder::class,
+            // VisitSeeder::class,
             QrcodeSeeder::class,
         ]);
     }

@@ -43,14 +43,14 @@
                                         <input type="text" name="searchquery" {!! request('searchquery') ? 'value="' . request('searchquery') . '"' : '' !!} class="form-control" placeholder="Zoeken" aria-label="Zoeken" aria-describedby="search">
                                     </div>
                                 </div>
-                                <div class="col-2">
+                                {{-- <div class="col-2">
                                     <select name="status" class="form-select mb-3" aria-label="status">
                                         <option disabled {{ request('status') ? '' : 'selected' }}>Status</option>
                                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Actief</option>
                                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactief</option>
                                     </select>
-                                </div>
-                                <div class="col-2">
+                                </div> --}}
+                                <div class="col-3">
                                     <select name="expiry" class="form-select mb-3" aria-label="status">
                                         <option disabled {{ request('expiry') ? '' : 'selected' }}>Geldigheid</option>
                                         <option value="valid" {{ request('expiry') == 'valid' ? 'selected' : '' }}>Geldig</option>
@@ -81,7 +81,7 @@
                           <tr>
                             <th>ID</th>
                             <th>Naam</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                             <th>Telefoon</th>
                             <th>Geldig</th>
                             <th></th>
@@ -98,13 +98,13 @@
                             <tr>
                                 <td>#{{ $member->id }}</td>
                                 <td>{{ $member->name }}</td>
-                                <td>
+                                {{-- <td>
                                     @if ($member->active)
                                         <span class="badge bg-primary">Actief</span>
                                     @else
                                         <span class="badge bg-danger">Inactief</span>
                                     @endif
-                                </td>
+                                </td> --}}
                                 <td>{{ $member->phone }}</td>
                                 <td>
                                     ({{ \Carbon\Carbon::parse($member->end_of_membership)->toFormattedDateString() }})
@@ -120,10 +120,10 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end" data-tooltip-stickto="top" data-tooltip-color="#ddd">
-                                        <button data-tooltip="Inklokken" onclick="recordVisitation({{ $member->id }})" class="btn btn-sm btn-light ms-1">
+                                        <button data-tooltip="Inklokken" onclick="recordVisitation({{ $member->id }})" class="btn btn-sm {{ count($member['visits']) ? 'btn-danger' : 'btn-success' }} ms-1">
                                             <i class="bi-box-arrow-in-right"></i>
                                         </button>
-                                        <button data-tooltip="Prolongeren" onclick="prolongMember({{ $member->id }})" class="btn btn-sm btn-light ms-1">
+                                        <button data-tooltip="Prolongeren" onclick="prolongMember({{ $member->id }})" class="btn btn-sm btn-primary ms-1">
                                             <i class="bi-arrow-repeat"></i>
                                         </button>
                                         <div class="dropdown ms-1">
@@ -145,7 +145,7 @@
                             <tr>
                                 <td>Geen members</td>
                                 <td></td>
-                                <td></td>
+                                {{-- <td></td> --}}
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -189,7 +189,7 @@
                                         </div>
                                         <div class="mb-3">
                                             <select name="gender" class="form-select" aria-label="gender">
-                                                <option disabled >Geslacht</option>
+                                                <option disabled selected >Geslacht</option>
                                                 <option value="male">Mannelijk</option>
                                                 <option value="female">Vrouwelijk</option>
                                             </select>
@@ -204,19 +204,10 @@
                                             <div class="row">
                                                 <div class="col-6">
                                                     <div class="form-check" style="padding-left: 0em;">
-                                                        <label for="paid" class="form-label">Betaald</label>
+                                                        <label for="paid" class="form-label">Sign up fee</label>
                                                         <div class="input-group mb-3">
                                                             <span class="input-group-text" id="paid">SRD</span>
-                                                            <input type="number" id="addPaid" name="paid" class="form-control" placeholder="0.00" aria-label="" aria-describedby="paid">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="form-check" style="padding-left: 0em;">
-                                                        <label for="paid" class="form-label">Retour</label>
-                                                        <div class="input-group mb-3">
-                                                            <span class="input-group-text" id="retour">SRD</span>
-                                                            <input type="number" id="addRetour" name="retour" class="form-control" placeholder="0.00" aria-label="" aria-describedby="retour">
+                                                            <input type="number" id="addPaid" name="balance" class="form-control" placeholder="0.00" aria-label="" aria-describedby="paid">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -254,25 +245,149 @@
     })
 
     async function recordVisitation(memberId) {
-        console.log("Record visit of Member #" + memberId)
-        await axios({
-            method: 'post',
-            url: '/api/members/' + memberId + '/actions/visit'
+        await axios.get('/api/members/' + memberId)
+        .then((response) => {
+            if (response.data.data.ends_in_days < 0) {
+                // return error message
+                Swal.fire({
+                    title: 'Lidmaatschap vervallen',
+                    text: 'Vervallen op ' + response.data.data.end_of_membership + '. Graag eerst prolongeren.',
+                    icon: 'error',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+
+                return Promise.reject('expired')
+            }
+            return axios({
+                method: 'post',
+                url: '/api/members/' + memberId + '/actions/visit'
+            })
         })
-        .then(function (response) {
-            console.log(response)
+        .then((response) => {
+            switch (response.data.message) {
+                case 'aangemeld':
+                    return Swal.fire({
+                        title: response.data.data.message,
+                        text: response.data.data.expiryMessage,
+                        icon: 'success',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                    break;
+                case 'afgemeld':
+                    return Swal.fire({
+                        title: response.data.data.message,
+                        text: response.data.data.expiryMessage,
+                        icon: 'success',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                    break;
+
+                default:
+                    Promise.reject('unknown')
+                    break;
+            }
+        })
+        .then((swal) => {
+            return fireReloadToast()
+        })
+        .then((swal) => {
+            if(swal.isDismissed) {
+                reloadAfter(0)
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+            if (error != 'expired') {
+                Swal.fire({
+                    title: error,
+                    icon: 'error'
+                })
+            }
         })
     }
 
     async function prolongMember (memberId) {
         console.log("Prolong Member #" + memberId)
         await axios({
-            method: 'post',
-            url: '/api/members/' + memberId + '/actions/prolong'
+            method: 'get',
+            url: '/api/members/' + memberId + '/actions/promptprolongation'
         })
-        .then(function (response) {
-            console.log(response)
+        .then((response) => {
+            return Swal.fire({
+                title: 'Prolongatie bevestigen?',
+                text: 'Lidmaatschap verlengen tot en met ' + response.data.data.proposed_date + '?',
+                confirmButtonText: 'Verlengen',
+                showDenyButton: true,
+                denyButtonText: 'Niet verlengen',
+                icon: 'question',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            })
         })
+        .then((swal) => {
+            if (!swal.isConfirmed) {
+                return Promise.reject('Prolongatie niet bevestigd.')
+            }
+
+            return axios({
+                method: 'post',
+                url: '/api/members/' + memberId + '/actions/prolong',
+            })
+        })
+        .then((response) => {
+            switch (response.data.message) {
+                case 'geprolongeerd':
+                    return Swal.fire({
+                        title: response.data.data.message,
+                        icon: 'success',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                    break;
+
+                default:
+                    Promise.reject('unknown')
+                    break;
+            }
+        })
+        .then((swal) => {
+            return fireReloadToast()
+        })
+        .then((swal) => {
+            if(swal.isDismissed) {
+                reloadAfter(0)
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+            if (error != 'expired') {
+                Swal.fire({
+                    title: error,
+                    icon: 'error'
+                })
+            }
+        })
+    }
+
+    function fireReloadToast () {
+        return Swal.fire({
+            title: 'Aan het reloaden...',
+            icon: 'info',
+            toast: true,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            showConfirmButton: false,
+        })
+    }
+
+    function reloadAfter (seconds = 6) {
+        setTimeout(function () {
+            window.location.reload()
+        }, seconds * 1000)
     }
 </script>
 @endsection

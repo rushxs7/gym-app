@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MemberResource extends JsonResource
@@ -14,6 +15,18 @@ class MemberResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $diffInDays = Carbon::today()->diffInDays(Carbon::parse($this->end_of_membership), false);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'address' => $this->address,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'gender' => $this->gender,
+            'end_of_membership' => $this->end_of_membership,
+            'ends_in_days' => $diffInDays,
+            'visits' => $this->visits,
+            'payments' => $this->payments
+        ];
     }
 }

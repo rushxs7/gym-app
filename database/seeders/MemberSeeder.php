@@ -27,7 +27,6 @@ class MemberSeeder extends Seeder
                 'email' => rand(0,1) ? $faker->email() : '',
                 'phone' => $faker->phoneNumber(),
                 'gender' => rand(0,1) ? 'male' : 'female',
-                'active' => rand(0,1),
                 'end_of_membership' => $eom
             ]);
         }

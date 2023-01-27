@@ -15,7 +15,6 @@ class Member extends Model
         'email',
         'phone',
         'gender',
-        'active',
         'end_of_membership'
     ];
 

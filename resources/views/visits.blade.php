@@ -83,9 +83,9 @@
                             </form>
                         </div>
                         <div class="col-2">
-                            <div class="d-flex justify-content-end">
+                            {{-- <div class="d-flex justify-content-end">
                                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#additionModal"><i class="bi-plus"></i> Aanmelden</button>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -96,6 +96,7 @@
                             <th>Member</th>
                             <th>Aangekomen</th>
                             <th>Vertrokken</th>
+                            <th></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -105,10 +106,14 @@
                                 <td>{{ $visit->members->name }}</td>
                                 <td>{{ $visit->time_of_arrival }}</td>
                                 <td>{{ $visit->time_of_departure }}</td>
+                                <td align="right">
+                                    {!! !$visit->time_of_departure ? '<button data-tooltip="Uitklokken" onclick="recordVisitation(' . $visit->member_id . ')" class="btn btn-sm btn-danger ms-1"><i class="bi-box-arrow-in-right"></i> Uitklokken</button>' : '' !!}
+                                </td>
                             </tr>
                             @empty
                             <tr>
                                 <td>Geen visites</td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -118,34 +123,6 @@
                     </table>
 
                     {!! $visits->appends($_GET)->links() !!}
-
-                    <div class="modal fade" id="additionModal" tabindex="-1" aria-labelledby="additionModal" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Register New Visit</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('visits.store') }}" method="post" autocomplete="off">
-                                    @csrf
-                                        <div class="mb-3">
-                                            <label for="name" class="form-label">Naam*</label>
-                                            <input type="text" required class="form-control" id="addName" name="name" placeholder="John Doe">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="phone" class="form-label">Telefoon*</label>
-                                            <input type="text" required class="form-control" id="addPhone" name="phone" placeholder="+597 7654321">
-                                        </div>
-                                        <hr class="my-3">
-                                        <div class="d-grid">
-                                            <button type="submit" class="btn btn-block btn-primary">Opslaan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -174,6 +151,89 @@
             $("#startFilter").prop("required", false)
             $("#endFilter").prop("required", false)
         }
+    }
+
+    async function recordVisitation(memberId) {
+        await axios.get('/api/members/' + memberId)
+        .then((response) => {
+            if (response.data.data.ends_in_days < 0) {
+                // return error message
+                Swal.fire({
+                    title: 'Lidmaatschap vervallen',
+                    text: 'Vervallen op ' + response.data.data.end_of_membership + '. Graag eerst prolongeren.',
+                    icon: 'error',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+
+                return Promise.reject('expired')
+            }
+            return axios({
+                method: 'post',
+                url: '/api/members/' + memberId + '/actions/visit'
+            })
+        })
+        .then((response) => {
+            switch (response.data.message) {
+                case 'aangemeld':
+                    return Swal.fire({
+                        title: response.data.data.message,
+                        text: response.data.data.expiryMessage,
+                        icon: 'success',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                    break;
+                case 'afgemeld':
+                    return Swal.fire({
+                        title: response.data.data.message,
+                        text: response.data.data.expiryMessage,
+                        icon: 'success',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                    break;
+
+                default:
+                    Promise.reject('unknown')
+                    break;
+            }
+        })
+        .then((swal) => {
+            return fireReloadToast()
+        })
+        .then((swal) => {
+            if(swal.isDismissed) {
+                reloadAfter(0)
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+            if (error != 'expired') {
+                Swal.fire({
+                    title: error,
+                    icon: 'error'
+                })
+            }
+        })
+    }
+
+    function fireReloadToast () {
+        return Swal.fire({
+            title: 'Aan het reloaden...',
+            icon: 'info',
+            toast: true,
+            timer: 2000,
+            timerProgressBar: true,
+            position: 'top-end',
+            showConfirmButton: false,
+        })
+    }
+
+    function reloadAfter (seconds = 6) {
+        setTimeout(function () {
+            window.location.reload()
+        }, seconds * 1000)
     }
 </script>
 @endsection

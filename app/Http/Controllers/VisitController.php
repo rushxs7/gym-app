@@ -42,7 +42,7 @@ class VisitController extends Controller
                         break;
                 }
             })
-            ->orderBy('time_of_arrival', 'asc')
+            ->orderBy('time_of_arrival', 'desc')
             ->with(['members'])
             ->paginate(15);
 

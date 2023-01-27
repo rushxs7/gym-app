@@ -11,6 +11,8 @@ use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Settings\AutomationSettings;
+use App\Settings\PaymentSettings;
 
 class MemberController extends Controller
 {
@@ -173,8 +175,18 @@ class MemberController extends Controller
                 ->isoFormat('LL');
         }
 
+        $penaltyFee = (float) 0;
+        $dateDifference = Carbon::parse($memberId->end_of_membership)
+            ->diffInDays(Carbon::today());
+
+        if ($dateDifference > app(AutomationSettings::class)->days_after_expiration_before_fine) {
+            $penaltyFee = (float) app(PaymentSettings::class)->penalty_fee;
+        }
+
         return $this->success([
             'member' => $memberId,
+            'price' => (float) app(PaymentSettings::class)->prolongation_fee + $penaltyFee,
+            'penalty' => $penaltyFee,
             'proposed_date' => $newExpiryDate
         ], 'proposeddate');
     }
@@ -193,6 +205,23 @@ class MemberController extends Controller
         $memberId->end_of_membership = $newExpiryDate;
         $memberId->save();
 
+        $prolongationPayment = Payment::create([
+            'member_id' => $memberId->id,
+            'balance' => (float) app(PaymentSettings::class)->prolongation_fee,
+            'type' => 'PRO',
+            'description' => 'Prolongatie lidmaatschap t/m ' . Carbon::parse($memberId->end_of_membership)->locale('nl')->isoFormat('LL'),
+        ]);
+
+        $dateDifference = Carbon::parse($memberId->end_of_membership)
+            ->diffInDays(Carbon::today());
+        if ($dateDifference > app(AutomationSettings::class)->days_after_expiration_before_fine) {
+            Payment::create([
+                'member_id' => $memberId->id,
+                'balance' => (float) app(PaymentSettings::class)->penalty_fee,
+                'type' => 'BOT',
+                'description' => 'Boete prolongatie betaling #' . $prolongationPayment->id,
+            ]);
+        }
 
         return $this->success([
             'verschil' => $diffInDays,

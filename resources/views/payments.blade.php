@@ -135,19 +135,31 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Nieuwe Betaling Registreren</h1>
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Nieuwe betaling registreren</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{{ route('visits.store') }}" method="post" autocomplete="off">
+                                    <form action="{{ route('payments.store') }}" method="post" autocomplete="off">
                                     @csrf
                                         <div class="mb-3">
-                                            <label for="name" class="form-label">Naam*</label>
-                                            <input type="text" required class="form-control" id="addName" name="name" placeholder="John Doe">
+                                            <label for="type" class="form-label">Type</label>
+                                            <select name="type" required id="type" class="form-select">
+                                                <option value="DAG">DAG - Dagtraining</option>
+                                                <option value="INS">INS - Inschrijving</option>
+                                                <option value="PRO">PRO - Prolongatie</option>
+                                                <option value="BOT">BOT - Boete</option>
+                                            </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="phone" class="form-label">Telefoon*</label>
-                                            <input type="text" required class="form-control" id="addPhone" name="phone" placeholder="+597 7654321">
+                                            <label for="description" class="form-label">Beschrijving</label>
+                                            <input type="text" class="form-control" id="description" name="description" placeholder="...">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="balance" class="form-label">Inkomst</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="balance">SRD</span>
+                                                <input type="number" id="balance" name="balance" required min="0.01" step="0.01" class="form-control">
+                                            </div>
                                         </div>
                                         <hr class="my-3">
                                         <div class="d-grid">

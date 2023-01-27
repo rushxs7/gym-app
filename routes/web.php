@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/visits/store', [VisitController::class, 'store'])->name('visits.store');
 
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
+    Route::put('/payments/{payment}/update', [PaymentController::class, 'update'])->name('payments.update');
+    Route::delete('/payments/{payment}/delete', [PaymentController::class, 'delete'])->name('payments.delete');
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/{group}/update', [SettingsController::class, 'update'])->name('settings.update');

@@ -162,7 +162,7 @@
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Member</h1>
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add new member</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
@@ -317,9 +317,13 @@
             url: '/api/members/' + memberId + '/actions/promptprolongation'
         })
         .then((response) => {
+            let boeteString = ''
+            if (response.data.data.penalty != 0) {
+                boeteString = ' (incl. boete van SRD' + response.data.data.penalty + ')'
+            }
             return Swal.fire({
                 title: 'Prolongatie bevestigen?',
-                text: 'Lidmaatschap verlengen tot en met ' + response.data.data.proposed_date + '?',
+                text: 'Lidmaatschap verlengen tot en met ' + response.data.data.proposed_date + ' voor SRD' + response.data.data.price + ' ' + boeteString + '?',
                 confirmButtonText: 'Verlengen',
                 showDenyButton: true,
                 denyButtonText: 'Niet verlengen',

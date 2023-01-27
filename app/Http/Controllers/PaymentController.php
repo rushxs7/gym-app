@@ -52,4 +52,21 @@ class PaymentController extends Controller
             'payments' => $payments
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|string',
+            'description' => 'required|string',
+            'balance' => 'required|numeric|gt:0'
+        ]);
+
+        Payment::create([
+            'type' => $request->type,
+            'description' => $request->description,
+            'balance' => $request->balance,
+        ]);
+
+        return redirect()->back()->with('success', 'Betaling opgeslagen');
+    }
 }

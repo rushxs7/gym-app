@@ -81,8 +81,8 @@
                           <tr>
                             <th>ID</th>
                             <th>Naam</th>
-                            {{-- <th>Status</th> --}}
                             <th>Telefoon</th>
+                            <th>In de gym</th>
                             <th>Geldig</th>
                             <th></th>
                           </tr>
@@ -106,6 +106,7 @@
                                     @endif
                                 </td> --}}
                                 <td>{{ $member->phone }}</td>
+                                <td>{!! count($member['visits']) ? '<i class="text-success bi bi-check-circle"></i>' : '<i class="text-danger bi bi-x-circle"></i>' !!}</td>
                                 <td>
                                     ({{ \Carbon\Carbon::parse($member->end_of_membership)->toFormattedDateString() }})
                                     @if ($diffInDays > 5)
@@ -145,7 +146,7 @@
                             <tr>
                                 <td>Geen members</td>
                                 <td></td>
-                                {{-- <td></td> --}}
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

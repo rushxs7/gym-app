@@ -27,7 +27,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $activeMembers = Member::where('active', 1)->count();
+        $activeMembers = Member::whereDate('end_of_membership', '>=', Carbon::today())->count();
         $newMembersThisMonth = Member::whereMonth('created_at', Carbon::now()->month)->count();
         $visitsYesterday = Visit::whereDate('time_of_arrival', Carbon::yesterday()->toDateString())->count();
         $visitsToday = Visit::whereDate('time_of_arrival', Carbon::today()->toDateString())->count();

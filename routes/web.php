@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\VisitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,4 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/visits/store', [VisitController::class, 'store'])->name('visits.store');
 
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/{group}/update', [SettingsController::class, 'update'])->name('settings.update');
 });

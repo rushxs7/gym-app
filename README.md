@@ -6,11 +6,12 @@ The Gym Management Application is a software solution designed to streamline the
 
 ## To-Do List
 
--   [ ] Implement member registration functionality
--   [ ] Develop late fee tracking feature
--   [ ] Implement membership prolongation feature
--   [ ] Create a gym visit logging system
--   [ ] Implement user authentication and access control
+-   [ ] Member registration
+-   [ ] Member editing
+-   [ ] Member sign in and out
+-   [ ] Modify pricing
+-   [ ] Add new price bundles
+-   [ ] Edit price bundles
 -   [ ] Design a user-friendly interface
 -   [ ] Test and debug the application
 -   [ ] Deploy the application to a production environment

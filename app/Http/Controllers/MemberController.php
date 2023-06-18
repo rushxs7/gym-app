@@ -80,7 +80,7 @@ class MemberController extends Controller
             'phone' => 'required',
             'birthday' => [
                 'nullable',
-                Rule::date(),
+                'date',
             ],
             'email' => 'nullable|email',
             'address' => 'nullable',
@@ -238,5 +238,10 @@ class MemberController extends Controller
             'member' => $memberId,
             'message' => 'Lidmaatschap geprolongeerd tot en met ' . $newExpiryDate->copy()->locale('nl')->isoFormat('LL'),
         ], 'geprolongeerd');
+    }
+
+    public function apiIndex(Request $request)
+    {
+        return null;
     }
 }

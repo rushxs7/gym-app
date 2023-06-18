@@ -49,4 +49,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/{group}/update', [SettingsController::class, 'update'])->name('settings.update');
+
+    Route::prefix('/session_api')->name('webapi.')->group(function () {
+        Route::get('/members', [MemberController::class, 'apiIndex'])->name('members.index');
+    });
 });

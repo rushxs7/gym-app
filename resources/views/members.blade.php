@@ -177,6 +177,10 @@
                                             <input type="text" required class="form-control" id="addPhone" name="phone" placeholder="+597 7654321">
                                         </div>
                                         <div class="mb-3">
+                                            <label for="birthday" class="form-label">Geboortedatum*</label>
+                                            <input type="date" class="form-control" id="birthday" name="birthday">
+                                        </div>
+                                        <div class="mb-3">
                                             <label for="email" class="form-label">Email</label>
                                             <input type="email" class="form-control" id="addEmail" name="email" placeholder="johndoe@contoso.com">
                                         </div>

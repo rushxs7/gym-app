@@ -24,9 +24,9 @@ Route::get('/', function () {
     return redirect('login');
 });
 
-Route::get('/test', function(Request $request) {
-    return rand(0,20) . ' ' . rand(0,4);
-});
+// Route::get('/test', function(Request $request) {
+//     return rand(0,20) . ' ' . rand(0,4);
+// });
 
 Auth::routes(['register' => false]);
 
@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/members', [MemberController::class, 'index'])->name('members.index');
     Route::post('/members/store', [MemberController::class, 'store'])->name('members.store');
+    Route::get('/members/{memberId}/edit', [MemberController::class, 'edit'])->name('members.edit');
+    Route::put('/members/{memberId}/update', [MemberController::class, 'update'])->name('members.update');
 
     Route::get('/visits', [VisitController::class, 'index'])->name('visits.index');
     Route::post('/visits/store', [VisitController::class, 'store'])->name('visits.store');

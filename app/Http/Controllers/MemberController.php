@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Settings\AutomationSettings;
 use App\Settings\PaymentSettings;
+use Illuminate\Validation\Rule;
 
 class MemberController extends Controller
 {
@@ -77,17 +78,21 @@ class MemberController extends Controller
         $request->validate([
             'name' => 'required',
             'phone' => 'required',
+            'birthday' => [
+                'nullable',
+                Rule::date(),
+            ],
             'email' => 'nullable|email',
             'address' => 'nullable',
             'gender' => 'nullable',
             'expiry' => 'required|date|after:today',
-            'paid' => 'required_if:registration,true',
-            'retour' => 'required_if:registration,true'
+            'balance' => 'required_if:registration,true',
         ]);
 
         $member = new Member();
         $member->name = $request->name;
         $member->phone = $request->phone;
+        $member->birthday = Carbon::parse($request->birthday);
         $member->email = $request->email;
         $member->address = $request->address;
         $member->gender = $request->gender;
@@ -104,6 +109,11 @@ class MemberController extends Controller
         }
 
         return redirect()->route('members.index')->with('success', 'Member succesvol opgeslagen.');
+    }
+
+    public function edit(Member $memberId, Request $request)
+    {
+
     }
 
     public function visit(Member $memberId, Request $request)

@@ -46,7 +46,7 @@ class VisitController extends Controller
             ->with(['members'])
             ->paginate(15);
 
-        return view('visits', [
+        return view('visits.index', [
             'visits' => $visits
         ]);
     }

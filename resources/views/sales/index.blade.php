@@ -35,7 +35,7 @@
 
                     <div class="row">
                         <div class="col-10">
-                            <form action="{{ route('payments.index') }}" method="GET">
+                            <form action="{{ route('sales.index') }}" method="GET">
                             <div class="row mb-2">
                                 <div class="col-3">
                                     <div class="input-group">
@@ -75,7 +75,7 @@
 
                                     <button class="btn btn-primary" type="submit"><i class="bi-funnel"></i></button>
                                     @if (request('searchquery') || request('timespan') || request('memberId'))
-                                        <a href="{{ route('payments.index') }}" class="btn btn-danger"><i class="bi-arrow-counterclockwise"></i></a>
+                                        <a href="{{ route('sales.index') }}" class="btn btn-danger"><i class="bi-arrow-counterclockwise"></i></a>
                                     @endif
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{{ route('payments.store') }}" method="post" autocomplete="off">
+                                    <form action="{{ route('sales.store') }}" method="post" autocomplete="off">
                                     @csrf
                                         <div class="mb-3">
                                             <label for="type" class="form-label">Type</label>

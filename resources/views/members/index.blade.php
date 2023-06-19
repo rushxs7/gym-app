@@ -135,7 +135,7 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li><a class="dropdown-item" href="{{ route('visits.index') }}/?memberId={{ $member->id }}">Visites</a></li>
-                                                <li><a class="dropdown-item" href="{{ route('payments.index') }}?memberId={{ $member->id }}">Betalingen</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('sales.index') }}?memberId={{ $member->id }}">Betalingen</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item" href="#">Bewerken</a></li>
                                                 <li><a class="dropdown-item" href="#">Verwijderen</a></li>

@@ -64,13 +64,13 @@ class MemberController extends Controller
 
             // return new MemberResourceCollection($members);
 
-        return view('members', ['members' => $members]);
+        return view('members.index', ['members' => $members]);
     }
 
-    public function show(Member $memberId)
+    public function show(Member $member)
     {
-        $memberId->load(['visits', 'payments']);
-        return new MemberResource($memberId);
+        $member->load(['visits', 'payments']);
+        return new MemberResource($member);
     }
 
     public function store(Request $request)
@@ -111,25 +111,26 @@ class MemberController extends Controller
         return redirect()->route('members.index')->with('success', 'Member succesvol opgeslagen.');
     }
 
-    public function edit(Member $memberId, Request $request)
+    public function edit(Member $member, Request $request)
     {
-
+        $member->load(['visits', 'payments']);
+        return view('members.edit', ['member' => $member]);
     }
 
-    public function visit(Member $memberId, Request $request)
+    public function visit(Member $member, Request $request)
     {
-        $endOfMembership = Carbon::parse($memberId->end_of_membership);
+        $endOfMembership = Carbon::parse($member->end_of_membership);
         $today = Carbon::today();
 
-        // if (!$memberId->active) {
-        //     return $this->error(['member' => $memberId, 'message' => 'Inactieve member. Prolongeer lidmaatschap eerst.'], 'inactief', 406);
+        // if (!$member->active) {
+        //     return $this->error(['member' => $member, 'message' => 'Inactieve member. Prolongeer lidmaatschap eerst.'], 'inactief', 406);
         // }
         if ($today->greaterThan($endOfMembership)) {
-            return $this->error(['member' => $memberId, 'message' => 'Lidmaatschap vervallen op ' . $endOfMembership->copy()->locale('nl')->toFormattedDateString() . '.'], 'vervallen', 406);
+            return $this->error(['member' => $member, 'message' => 'Lidmaatschap vervallen op ' . $endOfMembership->copy()->locale('nl')->toFormattedDateString() . '.'], 'vervallen', 406);
         }
 
         $todayString = Carbon::today()->toDateString();
-        $unclosedVisitsToday = Visit::where('member_id', $memberId->id)
+        $unclosedVisitsToday = Visit::where('member_id', $member->id)
             ->whereDate('time_of_arrival', $todayString)
             ->where('time_of_departure', null)
             ->get();
@@ -151,42 +152,42 @@ class MemberController extends Controller
 
         if (!count($unclosedVisitsToday)) {
             $newVisit = Visit::create([
-                'member_id' => $memberId->id,
+                'member_id' => $member->id,
                 'time_of_arrival' => Carbon::now(),
             ]);
             return $this->success([
                 'visit' => $newVisit,
-                'member' => $memberId,
-                'message' => $memberId->name . ' aangemeld. Welkom.',
+                'member' => $member,
+                'message' => $member->name . ' aangemeld. Welkom.',
                 'expiryMessage' => $expiryMessage
             ], 'aangemeld');
         } else {
             return $this->success([
                 'visit' => $unclosedVisitsToday,
-                'member' => $memberId,
-                'message' => $memberId->name . ' afgemeld. Tot ziens.',
+                'member' => $member,
+                'message' => $member->name . ' afgemeld. Tot ziens.',
                 'expiryMessage' => $expiryMessage
             ], 'afgemeld');
         }
     }
 
-    public function promptprolongation(Member $memberId, Request $request)
+    public function promptprolongation(Member $member, Request $request)
     {
-        $diffInDays = Carbon::today()->diffInDays(Carbon::parse($memberId->end_of_membership), false);
+        $diffInDays = Carbon::today()->diffInDays(Carbon::parse($member->end_of_membership), false);
         if ($diffInDays < 0) {
             $newExpiryDate = Carbon::today()
                 ->addMonthsWithoutOverflow(1)
                 ->locale('nl')
                 ->isoFormat('LL');
         } else {
-            $newExpiryDate = Carbon::parse($memberId->end_of_membership)
+            $newExpiryDate = Carbon::parse($member->end_of_membership)
                 ->addMonthsWithoutOverflow(1)
                 ->locale('nl')
                 ->isoFormat('LL');
         }
 
         $penaltyFee = (float) 0;
-        $dateDifference = Carbon::parse($memberId->end_of_membership)
+        $dateDifference = Carbon::parse($member->end_of_membership)
             ->diffInDays(Carbon::today());
 
         if ($dateDifference > app(AutomationSettings::class)->days_after_expiration_before_fine) {
@@ -194,39 +195,39 @@ class MemberController extends Controller
         }
 
         return $this->success([
-            'member' => $memberId,
+            'member' => $member,
             'price' => (float) app(PaymentSettings::class)->prolongation_fee + $penaltyFee,
             'penalty' => $penaltyFee,
             'proposed_date' => $newExpiryDate
         ], 'proposeddate');
     }
 
-    public function prolong(Member $memberId, Request $request)
+    public function prolong(Member $member, Request $request)
     {
-        // if (!$memberId->active) {
-        //     $memberId->active = 1;
+        // if (!$member->active) {
+        //     $member->active = 1;
         // }
-        $diffInDays = Carbon::today()->diffInDays(Carbon::parse($memberId->end_of_membership), false);
+        $diffInDays = Carbon::today()->diffInDays(Carbon::parse($member->end_of_membership), false);
         if ($diffInDays < 0) {
             $newExpiryDate = Carbon::today()->addMonthsWithoutOverflow(1);
         } else {
-            $newExpiryDate = Carbon::parse($memberId->end_of_membership)->addMonthsWithoutOverflow(1);
+            $newExpiryDate = Carbon::parse($member->end_of_membership)->addMonthsWithoutOverflow(1);
         }
-        $memberId->end_of_membership = $newExpiryDate;
-        $memberId->save();
+        $member->end_of_membership = $newExpiryDate;
+        $member->save();
 
         $prolongationPayment = Payment::create([
-            'member_id' => $memberId->id,
+            'member_id' => $member->id,
             'balance' => (float) app(PaymentSettings::class)->prolongation_fee,
             'type' => 'PRO',
-            'description' => 'Prolongatie lidmaatschap t/m ' . Carbon::parse($memberId->end_of_membership)->locale('nl')->isoFormat('LL'),
+            'description' => 'Prolongatie lidmaatschap t/m ' . Carbon::parse($member->end_of_membership)->locale('nl')->isoFormat('LL'),
         ]);
 
-        $dateDifference = Carbon::parse($memberId->end_of_membership)
+        $dateDifference = Carbon::parse($member->end_of_membership)
             ->diffInDays(Carbon::today());
         if ($dateDifference > app(AutomationSettings::class)->days_after_expiration_before_fine) {
             Payment::create([
-                'member_id' => $memberId->id,
+                'member_id' => $member->id,
                 'balance' => (float) app(PaymentSettings::class)->penalty_fee,
                 'type' => 'BOT',
                 'description' => 'Boete prolongatie betaling #' . $prolongationPayment->id,
@@ -235,7 +236,7 @@ class MemberController extends Controller
 
         return $this->success([
             'verschil' => $diffInDays,
-            'member' => $memberId,
+            'member' => $member,
             'message' => 'Lidmaatschap geprolongeerd tot en met ' . $newExpiryDate->copy()->locale('nl')->isoFormat('LL'),
         ], 'geprolongeerd');
     }

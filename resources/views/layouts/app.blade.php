@@ -37,16 +37,19 @@
                     <ul class="navbar-nav me-auto">
                         @auth
                         <div class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="bi bi-collection"></i>&nbsp;Dashboard</a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}">Members</a>
+                            <a class="nav-link {{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}"><i class="bi bi-person-vcard"></i>&nbsp;Members</a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('visits.*') ? 'active' : '' }}" href="{{ route('visits.index') }}">Visites</a>
+                            <a class="nav-link {{ request()->routeIs('visits.*') ? 'active' : '' }}" href="{{ route('visits.index') }}"><i class="bi bi-lightning-charge"></i>&nbsp;Visites</a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('payments.*') ? 'active' : '' }}" href="{{ route('payments.index') }}">Betalingen</a>
+                            <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}"><i class="bi bi-cart"></i>&nbsp;Products</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('sales*') ? 'active' : '' }}" href="{{ route('sales.index') }}"><i class="bi bi-wallet2"></i>&nbsp;Sales</a>
                         </div>
                         @endauth
                     </ul>
